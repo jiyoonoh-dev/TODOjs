@@ -23,7 +23,7 @@ Toy Project javascript
 ```
 
 ## Feature List
-  - display
+  - display [#2](https://github.com/jiyoonoh-dev/TODOjs/issues/1#issue-852282235)
   - add
   - remove
   - edit
