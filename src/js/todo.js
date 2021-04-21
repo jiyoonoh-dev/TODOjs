@@ -1,23 +1,5 @@
-const DB_KEY = "todoList";
-var todoList = [];
 
-/**
- * localStorage value를 가져와서 리스트
- */
-function loadTodoList(){
-    let strTodo = localStorage.getItem(DB_KEY);
-    if(strTodo === null)
-        todoList = [];
-    else
-        todoList = JSON.parse(strTodo);
-}
-
-/**
- * localStorage 저장
- */
-function saveTodoList(){
-    localStorage.setItem(DB_KEY, JSON.stringify(todoList));
-}
+var db = new DbHelper("todoList");
 
 function addListItem(item){
     let checkedStr = item.isDone ? ' checked="checked"  ' : '';
@@ -33,7 +15,7 @@ function addListItem(item){
 }
 
 function listUp(){
-    todoList.forEach(item => {
+    db.get().forEach(item => {
         addListItem(item); //list에 display
     });
 }
@@ -43,7 +25,6 @@ function listUp(){
  * @param {string} todoText 
  */
 function addTodo(todoText){
-    
     let item = {
         'id'    : getTodoId(),
         'text'  : todoText,
@@ -51,13 +32,7 @@ function addTodo(todoText){
     }
     //list에 display
     addListItem(item);
-
-    //js변수에 추가
-    todoList.push(item);
-
-    //localStorage에 저장
-    saveTodoList();
-    
+    db.addItem(item);
 }
 
 function addEvent(){
@@ -78,6 +53,7 @@ $(document).ready(function(){
         addEvent();
     });
 
+    //CHECK
     $(this).on("change",".todoCheck",function(e){
         let itemId = $(this).parent().data('id'); //속성이 data-id의 값을 가져옴
         let isChecked = $(this).prop("checked");  // $(this).is(":checked")도 가능
@@ -87,31 +63,17 @@ $(document).ready(function(){
         else
             $(this).parent().css("background-color","white");
         // js변수에 해당 item isDone을 업데이트
-        todoList.filter(f=>f.id==itemId).forEach(it=>{it.isDone = isChecked;});
+        db.updateIsDone(itemId,isChecked);
 
-        //localStorage에 동기화
-        saveTodoList();
     });
 
-  
-
-
-
+    //DELETE
     $(this).on("click",".todo-del-btn",function(e){
         let itemId = $(this).parent().data('id'); //속성이 data-id의 값을 가져옴
-
-        // js변수에 해당 item isDone을 업데이트
-        todoList = todoList.filter(f=>f.id!=itemId);
-
+        db.removeItem(itemId);
         //display delete
         $(this).parent().remove();
-
-        //localStorage에 동기화
-        saveTodoList();
     });
 
-
-    //localStorage의 데이터를 리스트로 뿌려줌
-    loadTodoList();
     listUp();
 })
