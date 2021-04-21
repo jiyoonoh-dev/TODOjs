@@ -1,5 +1,5 @@
 
-var db = new DbHelper("todoList");
+var db = new DbHelper("todoList",uiUpdate);
 
 function addListItem(item){
     let checkedStr = item.isDone ? ' checked="checked"  ' : '';
@@ -14,17 +14,18 @@ function addListItem(item){
     </li>`);
 }
 
-function listUp(){
-    db.get().forEach(item => {
-        addListItem(item); //list에 display
-    });
+function uiUpdate(){
+    $('#todoList').html(''); //ui에서 List clear
+    db.get().forEach(item=>addListItem(item)); //db값으로 redraw
 }
 
 /**
  * 할 일 추가
  * @param {string} todoText 
  */
-function addTodo(todoText){
+function addTodo(){
+    let todoText = $("#todoInput").val();
+    $("#todoInput").val('');
     let item = {
         'id'    : getTodoId(),
         'text'  : todoText,
@@ -35,23 +36,10 @@ function addTodo(todoText){
     db.addItem(item);
 }
 
-function addEvent(){
-    addTodo($("#todoInput").val());
-    $("#todoInput").val("");
-}
-
-
 $(document).ready(function(){
 
-    $('#todoInput').keydown(function(e){
-        if(e.keyCode==13){
-            addEvent();
-        }
-    });
-
-    $('.add').click(function(e){
-        addEvent();
-    });
+    $('#todoInput').keydown(e=>{if(e.keyCode==13) addTodo();});
+    $('.add').click(addTodo);
 
     //CHECK
     $(this).on("change",".todoCheck",function(e){
@@ -75,5 +63,5 @@ $(document).ready(function(){
         $(this).parent().remove();
     });
 
-    listUp();
+    uiUpdate();
 })

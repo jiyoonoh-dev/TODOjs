@@ -3,10 +3,11 @@ class DbHelper{
     // 변수이름 앞에 #붙이면 private변수 선언
     #dataList = [];
     #KEY = '';
-    constructor(KEY){
+    constructor(KEY, uiCallback){
         this.#KEY = KEY;
         let strTodo = localStorage.getItem(KEY);
         this.#dataList = (strTodo===null)? [] : JSON.parse(strTodo);
+        this.uiCallback = uiCallback;
     }
     //JAVASCRIPT, PYTHON 은 class 내부에 변수선언을 하지 않아도 접근 가능
     // testClass = new DbHelper("HI");
@@ -24,6 +25,7 @@ class DbHelper{
      */
     save(){
         localStorage.setItem(this.#KEY, JSON.stringify(this.#dataList));
+        this.uiCallback();
     }
 
     /**
