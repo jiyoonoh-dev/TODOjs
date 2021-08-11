@@ -5,7 +5,7 @@ class MySqlHelper{
     // 변수이름 앞에 #붙이면 private변수 선언
     constructor(KEY, uiCallback){
         this.uiCallback = uiCallback;
-        this.apiUrl = "http://localhost:8099/api";
+        this.apiUrl = "/api/";
     }
     //JAVASCRIPT, PYTHON 은 class 내부에 변수선언을 하지 않아도 접근 가능
     // testClass = new DbHelper("HI");
@@ -44,7 +44,7 @@ class MySqlHelper{
     get(){
         let dataList = [];
         $.ajax({
-            url : this.apiUrl+'/get',
+            url : this.apiUrl+'get',
             async: false,
             type : 'GET',
             data :{},
@@ -69,7 +69,7 @@ class MySqlHelper{
      * @param {json} item 
      */
     addItem(item){
-        this.setAjax('/add', 'POST', item);
+        this.setAjax('add', 'POST', item);
     }
 
     
@@ -83,7 +83,7 @@ class MySqlHelper{
             id : itemId,
             isDone : isChecked
         };
-        this.setAjax('/update', 'POST', data);
+        this.setAjax('update', 'POST', data);
     }
 
     /** 
@@ -104,7 +104,7 @@ class MySqlHelper{
      * @param {string} itemId 
      */
     removeItem(itemId){
-        this.setAjax('/delete/'+itemId, 'POST');
+        this.setAjax('delete/'+itemId, 'POST');
     }
     
 }
