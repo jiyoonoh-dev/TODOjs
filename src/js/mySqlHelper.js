@@ -1,12 +1,42 @@
+
+
 class MySqlHelper{
     //TODO : 생성자 (파라미터)
     // 변수이름 앞에 #붙이면 private변수 선언
     constructor(KEY, uiCallback){
         this.uiCallback = uiCallback;
+        this.apiUrl = "http://localhost:8099/api";
     }
     //JAVASCRIPT, PYTHON 은 class 내부에 변수선언을 하지 않아도 접근 가능
     // testClass = new DbHelper("HI");
     // testClass.KEY : public변수 사용 //HI
+
+
+    commonSucc(response){
+        console.log(response);
+        this.uiCallback();
+    }
+
+    commonDone(response){
+        console.log(response);
+    }
+    
+    commonError(jqXHR){
+        alert(jqXHR.error);
+    }
+
+    setAjax(url, method, data={}){
+        var settings = {
+            "url": this.apiUrl+url,
+            "method": method,
+            "timeout": 0,
+            "data" : data,
+            success:this.commonSucc.bind(this),
+            error:this.commonError
+          };
+          
+          $.ajax(settings).done(this.commonDone);
+    }
 
     /**
      * #dataList 리턴
@@ -14,7 +44,7 @@ class MySqlHelper{
     get(){
         let dataList = [];
         $.ajax({
-            url : 'http://localhost:8099/api/get',
+            url : this.apiUrl+'/get',
             async: false,
             type : 'GET',
             data :{},
@@ -23,9 +53,7 @@ class MySqlHelper{
                 console.log(data);
                 dataList = data;
             },
-            error:function(jqXHR){
-                alert(jqXHR.error);
-            }
+            error:this.commonError
         });
         return dataList;
     }
@@ -41,50 +69,21 @@ class MySqlHelper{
      * @param {json} item 
      */
     addItem(item){
-        var parent = this;
-        $.ajax({
-            url : 'http://localhost:8099/api/add',
-            async: true,
-            type : 'POST',
-            data :item,
-            dataType:'text',
-            success:function(data){
-                console.log(data);
-                parent.uiCallback();
-            },
-            error:function(jqXHR){
-                alert(jqXHR.error);
-            }
-        });
+        this.setAjax('/add', 'POST', item);
     }
 
+    
     /**
      * itemId 에 해당하는 item 의 완료체크 업데이트 
      * @param {string} itemId 
      * @param {boolean} isChecked 
      */
     updateIsDone(itemId, isChecked){
-        var parent = this;
-        var settings = {
-            "url": "http://localhost:8099/api/update",
-            "method": "POST",
-            "timeout": 0,
-            "data":{
-                id : itemId,
-                isDone : isChecked
-            },
-            success:function(data){
-                console.log(data);
-                parent.uiCallback();
-            },
-            error:function(jqXHR){
-                alert(jqXHR.error);
-            }
-          };
-          
-          $.ajax(settings).done(function (response) {
-            console.log(response);
-          });
+        var data = {
+            id : itemId,
+            isDone : isChecked
+        };
+        this.setAjax('/update', 'POST', data);
     }
 
     /** 
@@ -93,27 +92,11 @@ class MySqlHelper{
      * @param {string} editText 
      */
     updateText(itemId,editText){
-        var parent = this;
-        var settings = {
-            "url": "http://localhost:8099/api/update",
-            "method": "POST",
-            "timeout": 0,
-            "data":{
-                id : itemId,
-                text : editText
-            },
-            success:function(data){
-                console.log(data);
-                parent.uiCallback();
-            },
-            error:function(jqXHR){
-                alert(jqXHR.error);
-            }
-          };
-          
-          $.ajax(settings).done(function (response) {
-            console.log(response);
-          });
+        var data = {
+            id : itemId,
+            text : editText
+        };
+        this.setAjax('/update', 'POST', data);
     }
 
     /**
@@ -121,23 +104,7 @@ class MySqlHelper{
      * @param {string} itemId 
      */
     removeItem(itemId){
-        var parent = this;
-        var settings = {
-            "url": "http://localhost:8099/api/delete/"+itemId,
-            "method": "POST",
-            "timeout": 0,
-            success:function(data){
-                console.log(data);
-                parent.uiCallback();
-            },
-            error:function(jqXHR){
-                alert(jqXHR.error);
-            }
-          };
-          
-          $.ajax(settings).done(function (response) {
-            console.log(response);
-          });
+        this.setAjax('/delete/'+itemId, 'POST');
     }
     
 }
