@@ -47,6 +47,16 @@ class DbHelper{
         this.save();
     }
 
+    /** 
+     * itemText수정
+     * @param {string} itemId 
+     * @param {string} editText 
+     */
+    updateText(itemId, editText){
+        this.#dataList.filter(f=>f.id==itemId).forEach(it=>{it.text = editText;});
+        this.save();
+    }
+
     /**
      * itemId 에 해당하는 item 삭제 
      * @param {string} itemId 
@@ -55,4 +65,5 @@ class DbHelper{
         this.#dataList = this.#dataList.filter(f=>f.id!=itemId);
         this.save();
     }
+    
 }

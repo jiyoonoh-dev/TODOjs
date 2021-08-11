@@ -2,4 +2,7 @@
     float:right;
 }
 
+.flex-grow{
+    flex:1;
+}
 
